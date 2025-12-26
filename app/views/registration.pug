@@ -1,0 +1,35 @@
+extends layout
+
+block content
+  .container
+    h2 Create Account
+
+    if error
+      div.error #{error}
+
+    form(method="POST", action="/registration")
+      div
+        label Full Name
+        input(type="text", name="fullName", required)
+
+      div
+        label Email
+        input(type="email", name="email", required)
+
+      div
+        label Phone
+        input(type="text", name="phone", required)
+
+      div
+        label Password
+        input(type="password", name="password", required)
+
+      div
+        label Confirm Password
+        input(type="password", name="confirmPassword", required)
+
+      button(type="submit") Register
+
+    p
+      | Already registered?
+      a(href="/login") Login

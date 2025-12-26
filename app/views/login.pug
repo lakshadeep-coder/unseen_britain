@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  .container
+    h2 Login
+
+    if error
+      div.error #{error}
+
+    form(method="POST", action="/authenticate")
+      div
+        label Email
+        input(type="email", name="email", required)
+
+      div
+        label Password
+        input(type="password", name="password", required)
+
+      button(type="submit") Login
+
+    p
+      | Don’t have an account?
+      a(href="/registration") Register
