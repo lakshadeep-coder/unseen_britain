@@ -1,0 +1,60 @@
+extends layout
+
+block content
+  .dashboard-container
+
+    .dashboard-header
+      div
+        h2 Dashboard
+        p.subtitle Your contributions to Unseen Britain
+      a.btn-create(href="/place/create") + Create Place
+
+    form.filters(method="GET", action="/dashboard")
+      select(name="category")
+        option(value="") All Categories
+        option(value="nature" selected=filters.category=="nature") Nature
+        option(value="village" selected=filters.category=="village") Village
+        option(value="viewpoint" selected=filters.category=="viewpoint") Viewpoint
+        option(value="historic" selected=filters.category=="historic") Historic
+
+      select(name="difficulty")
+        option(value="") All Levels
+        option(value="Easy" selected=filters.difficulty=="Easy") Easy
+        option(value="Moderate" selected=filters.difficulty=="Moderate") Moderate
+        option(value="Hard" selected=filters.difficulty=="Hard") Hard
+
+      input(type="text", name="region", placeholder="Region", value=filters.region)
+
+      button(type="submit") Apply Filters
+
+    if places.length === 0
+      p.empty You haven’t added any places yet.
+
+    else
+      table.dashboard-table
+        thead
+          tr
+            th Title
+            th Region
+            th Category
+            th Difficulty
+            th Photos
+            th Risks
+            th Created
+            th Actions
+
+        tbody
+          each place in places
+            tr
+              td #{place.title}
+              td #{place.region}
+              td #{place.category}
+              td #{place.difficulty}
+              td #{place.photo_count}
+              td #{place.risk_count}
+              td #{place.created_at.toDateString()}
+              td.actions
+                a(href=`/place/${place.id}`) View
+                a.btn-edit(href=`/place/details/edit/${place.id}`) Edit
+                form(method="POST", action=`/place/delete/${place.id}`)
+                  button.btn-delete(type="submit" onclick="return confirm('Delete this place?')") Delete

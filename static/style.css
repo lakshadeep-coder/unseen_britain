@@ -73,3 +73,140 @@ a {
     color: #007bff;
     text-decoration: none;
 }
+
+.container {
+  max-width: 600px;
+  margin: 40px auto;
+}
+
+.card {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 6px;
+}
+
+.btn {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 16px;
+  background: #333;
+  color: white;
+  text-decoration: none;
+}
+
+.dashboard-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.filters input,
+.filters select,
+.filters button {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.dashboard-table th {
+  background: #222;
+  color: #fff;
+  padding: 10px;
+}
+
+.dashboard-table td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-edit {
+  background: #007bff;
+  color: white;
+  padding: 5px 10px;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.btn-delete {
+  background: #dc3545;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-container {
+  max-width: 600px;
+  margin: 40px auto;
+}
+
+.form-container input,
+.form-container textarea,
+.form-container select {
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 8px;
+}
+
+.error-list {
+  background: #ffe6e6;
+  padding: 10px;
+  border-radius: 5px;
+  color: #b00020;
+}
+
+.success-msg {
+  background: #e6ffed;
+  color: #1b5e20;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.form-container input,
+.form-container textarea,
+.form-container select {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+}
+.place-detail {
+  max-width: 900px;
+  margin: 40px auto;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.photo-grid img {
+  width: 100%;
+  border-radius: 6px;
+  object-fit: cover;
+}
+

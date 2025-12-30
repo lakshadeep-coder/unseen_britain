@@ -1,0 +1,33 @@
+extends layout
+
+block content
+  .form-container
+    h2 Edit Place Details
+
+    if success
+      .success-msg #{success}
+
+    form(method="POST" enctype="multipart/form-data")
+
+      h3 Cost Details (£)
+      input(type="number", name="travel_cost", value=cost.travel_cost)
+      input(type="number", name="food_cost", value=cost.food_cost)
+      input(type="number", name="stay_cost", value=cost.stay_cost)
+      input(type="number", name="entry_fee", value=cost.entry_fee)
+
+      hr
+      h3 What to Carry
+      label
+        input(type="checkbox", name="footwear", checked=reqs.footwear) Footwear
+      label
+        input(type="checkbox", name="water", checked=reqs.water) Water
+      label
+        input(type="checkbox", name="food", checked=reqs.food) Food
+      label
+        input(type="checkbox", name="raincoat", checked=reqs.raincoat) Raincoat
+
+      hr
+      h3 Upload More Photos
+      input(type="file", name="photos" multiple)
+
+      button(type="submit") Update Details

@@ -1,0 +1,66 @@
+extends layout
+
+block content
+  .form-container
+    h2 Add New Place
+
+    if success
+      .success-msg #{success}
+
+    if errors
+      ul.error-list
+        each err in errors
+          li #{err}
+
+    form(method="POST", action="/place/create" enctype="multipart/form-data")
+
+      label Title
+      input(type="text", name="title", value=form?.title)
+
+      label Description
+      textarea(name="description") #{form?.description}
+
+      label Region
+      input(type="text", name="region", value=form?.region)
+
+      label Category
+      select(name="category")
+        option(value="") Select Category
+        option(value="nature") Nature
+        option(value="village") Village
+        option(value="viewpoint") Viewpoint
+        option(value="historic") Historic
+
+      label Difficulty
+      select(name="difficulty")
+        option(value="") Select Difficulty
+        option(value="Easy") Easy
+        option(value="Moderate") Moderate
+        option(value="Hard") Hard
+
+      hr
+      h3 Cost Details (£)
+
+      input(type="number", name="travel_cost", placeholder="Travel Cost")
+      input(type="number", name="food_cost", placeholder="Food Cost")
+      input(type="number", name="stay_cost", placeholder="Stay Cost")
+      input(type="number", name="entry_fee", placeholder="Entry Fee")
+
+      hr
+      h3 What to Carry
+
+      label
+        input(type="checkbox", name="footwear") Footwear
+      label
+        input(type="checkbox", name="water") Water
+      label
+        input(type="checkbox", name="food") Food
+      label
+        input(type="checkbox", name="raincoat") Raincoat
+
+      hr
+      h3 Upload Photo
+
+      input(type="file", name="photo")
+
+      button(type="submit") Create Place
