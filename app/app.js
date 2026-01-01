@@ -382,42 +382,45 @@ app.get("/dashboard", requireLogin, async (req, res) => {
   res.render("dashboard", { places, filters: req.query });
 });
 
-app.get("/place/:id", async (req, res) => {
+app.get("/place/:id", requireLogin, async (req, res) => {
   const placeId = req.params.id;
 
   const place = await db.query(
-  "SELECT id FROM places WHERE id=? AND user_id=?",
-  [placeId, req.session.uid]
-);
+    `
+    SELECT *
+    FROM places
+    WHERE id = ? AND user_id = ?
+    `,
+    [placeId, req.session.uid]
+  );
 
-if (place.length === 0) {
-  return res.redirect("/dashboard");
-}
-
+  if (place.length === 0) {
+    return res.redirect("/dashboard");
+  }
 
   const cost = await db.query(
-    "SELECT * FROM place_costs WHERE place_id=?",
+    "SELECT * FROM place_costs WHERE place_id = ?",
     [placeId]
   );
 
   const reqs = await db.query(
-    "SELECT * FROM place_requirements WHERE place_id=?",
+    "SELECT * FROM place_requirements WHERE place_id = ?",
     [placeId]
   );
 
   const photos = await db.query(
-    "SELECT * FROM place_photos WHERE place_id=?",
+    "SELECT * FROM place_photos WHERE place_id = ?",
     [placeId]
   );
 
-res.render("place_detail", {
-  place: place[0],
-  cost: cost[0] || {},
-  reqs: reqs[0] || {},
-  photos
+  res.render("place_detail", {
+    place: place[0],
+    cost: cost[0] || {},
+    reqs: reqs[0] || {},
+    photos
+  });
 });
 
-});
 
 
 // Start server on port 3000

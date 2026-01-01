@@ -16,25 +16,26 @@ block content
 
     h3 Cost Details (£)
     ul
-      li Travel: £#{cost?.travel_cost || 0}
-      li Food: £#{cost?.food_cost || 0}
-      li Stay: £#{cost?.stay_cost || 0}
-      li Entry Fee: £#{cost?.entry_fee || 0}
+      li Travel: £#{cost.travel_cost || 0}
+      li Food: £#{cost.food_cost || 0}
+      li Stay: £#{cost.stay_cost || 0}
+      li Entry Fee: £#{cost.entry_fee || 0}
 
     hr
 
     h3 What to Carry
     ul
-      if reqs?.footwear
+      if reqs.footwear
         li Proper Footwear
-      if reqs?.water
+      if reqs.water
         li Water
-      if reqs?.food
+      if reqs.food
         li Food
-      if reqs?.raincoat
+      if reqs.raincoat
         li Raincoat
-      if !reqs?.footwear && !reqs?.water && !reqs?.food && !reqs?.raincoat
+      if !reqs.footwear && !reqs.water && !reqs.food && !reqs.raincoat
         li No special requirements
+
 
     hr
 
