@@ -1,0 +1,44 @@
+extends layout
+
+block content
+  .place-detail
+    h2 #{place.title}
+
+    p.meta
+      | #{place.region} · #{place.category} · #{place.difficulty}
+
+    p.description #{place.description}
+
+    hr
+
+    h3 Cost Details (£)
+    ul
+      li Travel: £#{cost.travel_cost || 0}
+      li Food: £#{cost.food_cost || 0}
+      li Stay: £#{cost.stay_cost || 0}
+      li Entry Fee: £#{cost.entry_fee || 0}
+
+    hr
+
+    h3 What to Carry
+    ul
+      if reqs.footwear
+        li Footwear
+      if reqs.water
+        li Water
+      if reqs.food
+        li Food
+      if reqs.raincoat
+        li Raincoat
+      if !reqs.footwear && !reqs.water && !reqs.food && !reqs.raincoat
+        li No special requirements
+
+    hr
+
+    h3 Photos
+    if photos.length === 0
+      p No photos available
+    else
+      .photo-grid
+        each photo in photos
+          img(src=photo.image_path)

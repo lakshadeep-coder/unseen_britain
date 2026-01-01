@@ -63,12 +63,12 @@ const upload = multer({
 const uploadMultiple = upload.array("photos", 5);
 
 
-// Create a route for root - /
-app.get("/", function (req, res) {
-  res.render("home", {
-    title: "Unseen Britain",
-  });
-});
+// // Create a route for root - /
+// app.get("/", function (req, res) {
+//   res.render("home", {
+//     title: "Unseen Britain",
+//   });
+// });
 
 // Create a route for testing the db
 app.get("/db_test", function (req, res) {
@@ -414,6 +414,63 @@ app.get("/place/:id", requireLogin, async (req, res) => {
   );
 
   res.render("place_detail", {
+    place: place[0],
+    cost: cost[0] || {},
+    reqs: reqs[0] || {},
+    photos
+  });
+});
+
+// VISITOR HOME – SHOW ALL PLACES
+app.get("/", async (req, res) => {
+  let places = [];
+
+  try {
+    places = await db.query(`
+      SELECT p.id, p.title, p.region, p.category, p.difficulty,
+             MIN(ph.image_path) AS image
+      FROM places p
+      LEFT JOIN place_photos ph ON p.id = ph.place_id
+      GROUP BY p.id
+      ORDER BY p.created_at DESC
+    `);
+  } catch (err) {
+    console.error("Home page fetch error:", err);
+  }
+
+  res.render("home", { places });
+});
+
+
+// VISITOR PLACE DETAIL
+app.get("/place/view/:id", async (req, res) => {
+  const placeId = req.params.id;
+
+  const place = await db.query(
+    "SELECT * FROM places WHERE id = ?",
+    [placeId]
+  );
+
+  if (place.length === 0) {
+    return res.redirect("/");
+  }
+
+  const cost = await db.query(
+    "SELECT * FROM place_costs WHERE place_id = ?",
+    [placeId]
+  );
+
+  const reqs = await db.query(
+    "SELECT * FROM place_requirements WHERE place_id = ?",
+    [placeId]
+  );
+
+  const photos = await db.query(
+    "SELECT * FROM place_photos WHERE place_id = ?",
+    [placeId]
+  );
+
+  res.render("place_detail_visitor", {
     place: place[0],
     cost: cost[0] || {},
     reqs: reqs[0] || {},

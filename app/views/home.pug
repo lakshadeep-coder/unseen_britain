@@ -1,4 +1,30 @@
 extends layout
 
 block content
-  p Welcome to the Unseen Britain project.
+  .hero
+    h1 Discover Unseen Britain
+    p.tagline Hidden places shared by real explorers
+    .hero-actions
+      a.btn-primary(href="/registration") Join Free
+      a.btn-secondary(href="/login") Login
+
+  .places-section
+    h2 Explore Places
+
+    if places.length === 0
+      p No places added yet.
+
+    else
+      .place-grid
+        each place in places
+          .place-card
+            if place.image
+              img(src=place.image, alt=place.title)
+            else
+              img(src="/placeholder.jpg", alt="No image")
+
+            .card-content
+              h3 #{place.title}
+              p.meta #{place.region} · #{place.category}
+              span.badge #{place.difficulty}
+              a.btn-view(href=`/place/view/${place.id}`) View Details
