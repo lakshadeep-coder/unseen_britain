@@ -422,24 +422,53 @@ app.get("/place/:id", requireLogin, async (req, res) => {
 });
 
 // VISITOR HOME – SHOW ALL PLACES
+// VISITOR HOME – SEARCH + FILTER
 app.get("/", async (req, res) => {
-  let places = [];
+  const { q, category, difficulty, region } = req.query;
 
-  try {
-    places = await db.query(`
-      SELECT p.id, p.title, p.region, p.category, p.difficulty,
-             MIN(ph.image_path) AS image
-      FROM places p
-      LEFT JOIN place_photos ph ON p.id = ph.place_id
-      GROUP BY p.id
-      ORDER BY p.created_at DESC
-    `);
-  } catch (err) {
-    console.error("Home page fetch error:", err);
+  let conditions = [];
+  let values = [];
+
+  if (q) {
+    conditions.push("(p.title LIKE ? OR p.description LIKE ?)");
+    values.push(`%${q}%`, `%${q}%`);
   }
 
-  res.render("home", { places });
+  if (category) {
+    conditions.push("p.category = ?");
+    values.push(category);
+  }
+
+  if (difficulty) {
+    conditions.push("p.difficulty = ?");
+    values.push(difficulty);
+  }
+
+  if (region) {
+    conditions.push("p.region LIKE ?");
+    values.push(`%${region}%`);
+  }
+
+  const whereClause = conditions.length
+    ? `WHERE ${conditions.join(" AND ")}`
+    : "";
+
+  const places = await db.query(`
+    SELECT p.id, p.title, p.region, p.category, p.difficulty,
+           MIN(ph.image_path) AS image
+    FROM places p
+    LEFT JOIN place_photos ph ON p.id = ph.place_id
+    ${whereClause}
+    GROUP BY p.id
+    ORDER BY p.created_at DESC
+  `, values);
+
+  res.render("home", {
+    places,
+    filters: req.query
+  });
 });
+
 
 
 // VISITOR PLACE DETAIL

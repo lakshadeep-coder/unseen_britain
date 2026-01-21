@@ -1,0 +1,106 @@
+//- Navigation Bar Component
+mixin navbar(user)
+  nav.navbar
+    .navbar-container
+      a.navbar-brand(href="/")
+        i.fas.fa-mountain
+        span Unseen Britain
+      
+      .navbar-search
+        form.search-form(action="/" method="GET")
+          input.search-input(
+            type="text"
+            name="q"
+            placeholder="Search hidden places..."
+            value=filters && filters.q ? filters.q : ""
+          )
+          button.search-button(type="submit")
+            i.fas.fa-search
+      
+      .navbar-menu
+        ul.navbar-nav
+          if user
+            //- Logged-in user menu
+            li.nav-item
+              a.nav-link(href="/" class=(currentPath === '/' ? 'active' : ''))
+                i.fas.fa-home
+                span Home
+            
+            li.nav-item
+              a.nav-link(href="/dashboard" class=(currentPath === '/dashboard' ? 'active' : ''))
+                i.fas.fa-compass
+                span Dashboard
+            
+            li.nav-item.dropdown
+              a.nav-link.dropdown-toggle(href="#" role="button" data-toggle="dropdown")
+                i.fas.fa-plus-circle
+                span Add New
+              .dropdown-menu
+                a.dropdown-item(href="/place/add")
+                  i.fas.fa-map-marker-alt
+                  span Add Place
+                a.dropdown-item(href="/category/add")
+                  i.fas.fa-tag
+                  span Add Category
+            
+            li.nav-item.dropdown
+              a.nav-link.dropdown-toggle(href="#" role="button" data-toggle="dropdown")
+                i.fas.fa-user-circle
+                span= user.name || user.username
+                if user.avatar
+                  img.avatar-small(src=user.avatar alt="Profile")
+              .dropdown-menu
+                a.dropdown-item(href="/profile")
+                  i.fas.fa-user
+                  span My Profile
+                a.dropdown-item(href="/my-places")
+                  i.fas.fa-map-pin
+                  span My Places
+                a.dropdown-item(href="/settings")
+                  i.fas.fa-cog
+                  span Settings
+                .dropdown-divider
+                a.dropdown-item(href="/logout")
+                  i.fas.fa-sign-out-alt
+                  span Logout
+            
+            //- Notification badge (optional)
+            li.nav-item.notification
+              a.nav-link(href="/notifications")
+                i.fas.fa-bell
+                span.badge.badge-notification 3
+          
+          else
+            //- Guest menu
+            li.nav-item
+              a.nav-link(href="/" class=(currentPath === '/' ? 'active' : ''))
+                i.fas.fa-home
+                span Home
+            
+            li.nav-item
+              a.nav-link(href="/places" class=(currentPath === '/places' ? 'active' : ''))
+                i.fas.fa-map-marked-alt
+                span All Places
+            
+            li.nav-item
+              a.nav-link(href="/categories" class=(currentPath === '/categories' ? 'active' : ''))
+                i.fas.fa-tags
+                span Categories
+            
+            li.nav-item
+              a.nav-link(href="/about" class=(currentPath === '/about' ? 'active' : ''))
+                i.fas.fa-info-circle
+                span About
+            
+            li.nav-item
+              a.nav-link.btn-nav-cta(href="/registration")
+                i.fas.fa-user-plus
+                span Join Free
+            
+            li.nav-item
+              a.nav-link(href="/login" class=(currentPath === '/login' ? 'active' : ''))
+                i.fas.fa-sign-in-alt
+                span Login
+      
+      button.navbar-toggle(aria-label="Toggle navigation")
+        i.fas.fa-bars

@@ -7,6 +7,36 @@ block content
     .hero-actions
       a.btn-primary(href="/registration") Join Free
       a.btn-secondary(href="/login") Login
+  .places-filters
+    form(method="GET", action="/")
+      input(
+        type="text",
+        name="q",
+        placeholder="Search places..."
+        value=filters.q
+      )
+
+      select(name="category")
+        option(value="") All Categories
+        option(value="nature" selected=filters.category=="nature") Nature
+        option(value="village" selected=filters.category=="village") Village
+        option(value="viewpoint" selected=filters.category=="viewpoint") Viewpoint
+        option(value="historic" selected=filters.category=="historic") Historic
+
+      select(name="difficulty")
+        option(value="") Any Difficulty
+        option(value="Easy" selected=filters.difficulty=="Easy") Easy
+        option(value="Moderate" selected=filters.difficulty=="Moderate") Moderate
+        option(value="Hard" selected=filters.difficulty=="Hard") Hard
+
+      input(
+        type="text",
+        name="region",
+        placeholder="Region"
+        value=filters.region
+      )
+
+      button(type="submit") Search
 
   .places-section
     h2 Explore Places
