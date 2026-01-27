@@ -1,160 +1,270 @@
 extends layout
 
 block content
-  .form-container
-    h2 Add New Place
+  include navbar
+  
+  .form-page
+    .form-container
+      .form-header
+        h2 Add New Place
+        p.subtitle Share your hidden discovery with the Unseen Britain community
+        
+      // SUCCESS MESSAGE
+      if success
+        .success-msg
+          i.fas.fa-check-circle
+          span #{success}
 
-    // SUCCESS MESSAGE
-    if success
-      .success-msg #{success}
+      // ERROR LIST
+      if errors
+        .error-list
+          i.fas.fa-exclamation-triangle
+          ul
+            each err in errors
+              li #{err}
 
-    // ERROR LIST
-    if errors
-      ul.error-list
-        each err in errors
-          li #{err}
-
-    form(method="POST", action="/place/create", enctype="multipart/form-data")
-
-      // TITLE
-      label Title
-      input(
-        type="text",
-        name="title",
-        value=form && form.title || "",
-        required
-      )
-
-      // DESCRIPTION
-      label Description
-      textarea(name="description", required)
-        | #{form && form.description || ""}
-
-      // REGION
-      label Region
-      input(
-        type="text",
-        name="region",
-        value=form && form.region || "",
-        required
-      )
-
-      // CATEGORY
-      label Category
-      select(name="category", required)
-        option(value="") Select Category
-        option(
-          value="nature",
-          selected=form && form.category == "nature"
-        ) Nature
-        option(
-          value="village",
-          selected=form && form.category == "village"
-        ) Village
-        option(
-          value="viewpoint",
-          selected=form && form.category == "viewpoint"
-        ) Viewpoint
-        option(
-          value="historic",
-          selected=form && form.category == "historic"
-        ) Historic
-
-      // DIFFICULTY
-      label Difficulty
-      select(name="difficulty", required)
-        option(value="") Select Difficulty
-        option(
-          value="Easy",
-          selected=form && form.difficulty == "Easy"
-        ) Easy
-        option(
-          value="Moderate",
-          selected=form && form.difficulty == "Moderate"
-        ) Moderate
-        option(
-          value="Hard",
-          selected=form && form.difficulty == "Hard"
-        ) Hard
-
-      hr
-
-      // COST DETAILS
-      h3 Cost Details (£)
-
-      input(
-        type="number",
-        name="travel_cost",
-        placeholder="Travel Cost",
-        value=form && form.travel_cost || 0,
-        min="0"
-      )
-
-      input(
-        type="number",
-        name="food_cost",
-        placeholder="Food Cost",
-        value=form && form.food_cost || 0,
-        min="0"
-      )
-
-      input(
-        type="number",
-        name="stay_cost",
-        placeholder="Stay Cost",
-        value=form && form.stay_cost || 0,
-        min="0"
-      )
-
-      input(
-        type="number",
-        name="entry_fee",
-        placeholder="Entry Fee",
-        value=form && form.entry_fee || 0,
-        min="0"
-      )
-
-      hr
-
-      // REQUIREMENTS
-      h3 What to Carry
-
-      label
-        input(
-          type="checkbox",
-          name="footwear",
-          checked=form && form.footwear
-        )
-        | Footwear
-
-      label
-        input(
-          type="checkbox",
-          name="water",
-          checked=form && form.water
-        )
-        | Water
-
-      label
-        input(
-          type="checkbox",
-          name="food",
-          checked=form && form.food
-        )
-        | Food
-
-      label
-        input(
-          type="checkbox",
-          name="raincoat",
-          checked=form && form.raincoat
-        )
-        | Raincoat
-
-      hr
-
-      // PHOTO UPLOAD
-      h3 Upload Photo
-      input(type="file", name="photo", accept="image/*")
-
-      button(type="submit") Create Place
+      form.form-content(method="POST", action="/place/create", enctype="multipart/form-data")
+        
+        .form-section
+          .section-header
+            i.fas.fa-info-circle
+            h3 Basic Information
+          
+          .form-grid
+            .form-group.full-width
+              label.form-label
+                i.fas.fa-heading
+                span Title
+              input.form-input(
+                type="text",
+                name="title",
+                placeholder="Enter place name",
+                value=form && form.title || "",
+                required
+              )
+              .form-hint A catchy, descriptive name for your discovery
+            
+            .form-group.full-width
+              label.form-label
+                i.fas.fa-align-left
+                span Description
+              textarea.form-textarea(
+                name="description",
+                placeholder="Describe what makes this place special...",
+                required
+                rows="4"
+              ) #{form && form.description || ""}
+              .form-hint Share the story, atmosphere, and unique features
+            
+            .form-group
+              label.form-label
+                i.fas.fa-map-marker-alt
+                span Region
+              input.form-input(
+                type="text",
+                name="region",
+                placeholder="e.g., Scotland, Lake District",
+                value=form && form.region || "",
+                required
+              )
+            
+            .form-group
+              label.form-label
+                i.fas.fa-tag
+                span Category
+              select.form-select(name="category", required)
+                option(value="") Select Category
+                option(
+                  value="nature",
+                  selected=form && form.category == "nature"
+                ) 🌿 Nature
+                option(
+                  value="village",
+                  selected=form && form.category == "village"
+                ) 🏡 Village
+                option(
+                  value="viewpoint",
+                  selected=form && form.category == "viewpoint"
+                ) 🏞️ Viewpoint
+                option(
+                  value="historic",
+                  selected=form && form.category == "historic"
+                ) 🏰 Historic
+            
+            .form-group
+              label.form-label
+                i.fas.fa-mountain
+                span Difficulty
+              select.form-select(name="difficulty", required)
+                option(value="") Select Difficulty
+                option(
+                  value="Easy",
+                  selected=form && form.difficulty == "Easy"
+                ) 🟢 Easy
+                option(
+                  value="Moderate",
+                  selected=form && form.difficulty == "Moderate"
+                ) 🟡 Moderate
+                option(
+                  value="Hard",
+                  selected=form && form.difficulty == "Hard"
+                ) 🔴 Hard
+        
+        .form-section
+          .section-header
+            i.fas.fa-pound-sign
+            h3 Cost Details
+            .section-subtitle All costs in £ (British Pounds)
+          
+          .cost-grid
+            .cost-card
+              .cost-icon
+                i.fas.fa-car
+              label.cost-label Travel Cost
+              input.cost-input(
+                type="number",
+                name="travel_cost",
+                placeholder="0",
+                value=form && form.travel_cost || 0,
+                min="0"
+              )
+              .cost-hint Transportation expenses
+            
+            .cost-card
+              .cost-icon
+                i.fas.fa-utensils
+              label.cost-label Food Cost
+              input.cost-input(
+                type="number",
+                name="food_cost",
+                placeholder="0",
+                value=form && form.food_cost || 0,
+                min="0"
+              )
+              .cost-hint Meals & snacks
+            
+            .cost-card
+              .cost-icon
+                i.fas.fa-bed
+              label.cost-label Stay Cost
+              input.cost-input(
+                type="number",
+                name="stay_cost",
+                placeholder="0",
+                value=form && form.stay_cost || 0,
+                min="0"
+              )
+              .cost-hint Accommodation
+            
+            .cost-card
+              .cost-icon
+                i.fas.fa-ticket-alt
+              label.cost-label Entry Fee
+              input.cost-input(
+                type="number",
+                name="entry_fee",
+                placeholder="0",
+                value=form && form.entry_fee || 0,
+                min="0"
+              )
+              .cost-hint Entrance tickets
+        
+        .form-section
+          .section-header
+            i.fas.fa-hiking
+            h3 What to Carry
+            .section-subtitle Essential items for this adventure
+          
+          .requirements-grid
+            .requirement-item
+              label.checkbox-label
+                input.checkbox-input(
+                  type="checkbox",
+                  name="footwear",
+                  checked=form && form.footwear
+                )
+                .checkbox-custom
+                  i.fas.fa-check
+                .checkbox-content
+                  .checkbox-icon
+                    i.fas.fa-shoe-prints
+                  .checkbox-text
+                    strong Footwear
+                    small Hiking boots or sturdy shoes
+            
+            .requirement-item
+              label.checkbox-label
+                input.checkbox-input(
+                  type="checkbox",
+                  name="water",
+                  checked=form && form.water
+                )
+                .checkbox-custom
+                  i.fas.fa-check
+                .checkbox-content
+                  .checkbox-icon
+                    i.fas.fa-tint
+                  .checkbox-text
+                    strong Water
+                    small Hydration is essential
+            
+            .requirement-item
+              label.checkbox-label
+                input.checkbox-input(
+                  type="checkbox",
+                  name="food",
+                  checked=form && form.food
+                )
+                .checkbox-custom
+                  i.fas.fa-check
+                .checkbox-content
+                  .checkbox-icon
+                    i.fas.fa-apple-alt
+                  .checkbox-text
+                    strong Food
+                    small Snacks or packed meals
+            
+            .requirement-item
+              label.checkbox-label
+                input.checkbox-input(
+                  type="checkbox",
+                  name="raincoat",
+                  checked=form && form.raincoat
+                )
+                .checkbox-custom
+                  i.fas.fa-check
+                .checkbox-content
+                  .checkbox-icon
+                    i.fas.fa-umbrella
+                  .checkbox-text
+                    strong Raincoat
+                    small British weather protection
+        
+        .form-section
+          .section-header
+            i.fas.fa-camera
+            h3 Photo Upload
+            .section-subtitle Show others what to expect
+            
+          .photo-upload
+            label.file-upload-label
+              .upload-area
+                i.fas.fa-cloud-upload-alt
+                span Upload Photo
+                small JPG, PNG up to 5MB
+              input.file-upload-input(
+                type="file",
+                name="photo",
+                accept="image/*"
+              )
+            
+            .upload-preview
+              // Preview area for selected image
+        
+        .form-actions
+          button.btn-submit(type="submit")
+            i.fas.fa-plus-circle
+            span Create Place
+          a.btn-cancel(href="/dashboard")
+            i.fas.fa-times
+            span Cancel

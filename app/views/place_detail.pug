@@ -1,48 +1,211 @@
 extends layout
 
 block content
-  .place-detail
-
-    h2 #{place.title}
-
-    p.meta
-      span #{place.region} |
-      span #{place.category} |
-      span #{place.difficulty}
-
-    p.description #{place.description}
-
-    hr
-
-    h3 Cost Details (£)
-    ul
-      li Travel: £#{cost.travel_cost || 0}
-      li Food: £#{cost.food_cost || 0}
-      li Stay: £#{cost.stay_cost || 0}
-      li Entry Fee: £#{cost.entry_fee || 0}
-
-    hr
-
-    h3 What to Carry
-    ul
-      if reqs.footwear
-        li Proper Footwear
-      if reqs.water
-        li Water
-      if reqs.food
-        li Food
-      if reqs.raincoat
-        li Raincoat
-      if !reqs.footwear && !reqs.water && !reqs.food && !reqs.raincoat
-        li No special requirements
-
-
-    hr
-
-    h3 Photos
-    if photos.length === 0
-      p No photos uploaded yet.
-    else
-      .photo-grid
-        each photo in photos
-          img(src=photo.image_path, alt="Place photo")
+  include navbar
+  
+  .place-detail-page
+    //- Main content container
+    .place-detail-container
+      //- Place Header
+      .place-header
+        .place-breadcrumb
+          a(href="/") Home
+          i.fas.fa-chevron-right
+          a(href="/dashboard") Dashboard
+          i.fas.fa-chevron-right
+          span #{place.title}
+        
+        .place-header-actions
+          a.btn-action(href=`/place/edit/${place.id}`)
+            i.fas.fa-edit
+            span Edit
+          form.delete-form(method="POST" action=`/place/delete/${place.id}`)
+            button.btn-action.delete-btn(
+              type="submit"
+              onclick="return confirm('Are you sure you want to delete this place?')"
+            )
+              i.fas.fa-trash-alt
+              span Delete
+      
+      //- Main Place Content
+      .place-content
+        //- Hero Section with Title and Meta
+        .place-hero
+          h1.place-title #{place.title}
+          .place-meta
+            .meta-item
+              i.fas.fa-map-marker-alt
+              span.region #{place.region}
+            .meta-item
+              i.fas.fa-tag
+              span.category #{place.category}
+            .meta-item
+              i.fas.fa-mountain
+              span.difficulty(class=place.difficulty.toLowerCase()) #{place.difficulty}
+            .meta-item
+              i.fas.fa-calendar-alt
+              span.date Added #{place.created_at.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+          
+          .place-description
+            p #{place.description}
+        
+        //- Photos Section (Simple static display without modal)
+        .place-section
+          .section-header
+            h2
+              i.fas.fa-camera
+              span Photos
+            .photo-count #{photos.length} photo#{photos.length !== 1 ? 's' : ''}
+          
+          if photos.length === 0
+            .photos-empty
+              .empty-state
+                i.fas.fa-images
+                h3 No Photos Yet
+                p Be the first to add photos of this beautiful place.
+          
+          else
+            .photo-gallery
+              //- Display all photos in a simple grid
+              .photo-grid
+                each photo in photos
+                  .photo-item
+                    img(
+                      src=photo.image_path,
+                      alt="Photo of #{place.title}",
+                      loading="lazy"
+                    )
+        
+        //- Details Grid
+        .details-grid
+          //- Cost Details
+          .detail-card
+            .card-header
+              i.fas.fa-pound-sign
+              h3 Cost Details
+              .card-subtitle Estimated expenses in £
+            
+            .card-content
+              .cost-item
+                .cost-label
+                  i.fas.fa-car
+                  span Travel
+                .cost-value £#{cost.travel_cost || 0}
+              
+              .cost-item
+                .cost-label
+                  i.fas.fa-utensils
+                  span Food
+                .cost-value £#{cost.food_cost || 0}
+              
+              .cost-item
+                .cost-label
+                  i.fas.fa-bed
+                  span Stay
+                .cost-value £#{cost.stay_cost || 0}
+              
+              .cost-item
+                .cost-label
+                  i.fas.fa-ticket-alt
+                  span Entry Fee
+                .cost-value £#{cost.entry_fee || 0}
+              
+              .cost-total
+                .total-label Total Estimated Cost
+                .total-value £#{((cost.travel_cost || 0) + (cost.food_cost || 0) + (cost.stay_cost || 0) + (cost.entry_fee || 0))}
+          
+          //- Requirements
+          .detail-card
+            .card-header
+              i.fas.fa-hiking
+              h3 What to Carry
+              .card-subtitle Essential items for this adventure
+            
+            .card-content
+              if reqs.footwear || reqs.water || reqs.food || reqs.raincoat
+                .requirements-list
+                  if reqs.footwear
+                    .requirement-item
+                      .req-icon
+                        i.fas.fa-shoe-prints
+                      .req-text
+                        strong Proper Footwear
+                        small Hiking boots or sturdy shoes
+                  
+                  if reqs.water
+                    .requirement-item
+                      .req-icon
+                        i.fas.fa-tint
+                      .req-text
+                        strong Water
+                        small Stay hydrated on your adventure
+                  
+                  if reqs.food
+                    .requirement-item
+                      .req-icon
+                        i.fas.fa-apple-alt
+                      .req-text
+                        strong Food
+                        small Snacks or packed meals
+                  
+                  if reqs.raincoat
+                    .requirement-item
+                      .req-icon
+                        i.fas.fa-umbrella
+                      .req-text
+                        strong Raincoat
+                        small British weather protection
+              
+              else
+                .no-requirements
+                  i.fas.fa-check-circle
+                  .no-reqs-text
+                    strong No special requirements
+                    small Just bring your sense of adventure!
+          
+          //- Quick Stats
+          .detail-card.stats-card
+            .card-header
+              i.fas.fa-chart-line
+              h3 Quick Stats
+            
+            .card-content
+              .stat-item
+                .stat-label Category
+                .stat-value #{place.category}
+              
+              .stat-item
+                .stat-label Difficulty
+                .stat-value(class=place.difficulty.toLowerCase()) #{place.difficulty}
+              
+              .stat-item
+                .stat-label Region
+                .stat-value #{place.region}
+              
+              .stat-item
+                .stat-label Added
+                .stat-value #{place.created_at.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+          
+          //- Actions Card
+          .detail-card.actions-card
+            .card-header
+              i.fas.fa-share-alt
+              h3 Share & Actions
+            
+            .card-content
+              .action-links
+                a.action-link.share-link(href="#")
+                  i.fas.fa-share
+                  span Share
+                
+                a.action-link.save-link(href="#")
+                  i.fas.fa-heart
+                  span Save
+                
+                a.action-link.map-link(href="#")
+                  i.fas.fa-map
+                  span View on Map
+              
+              .visit-info
+                i.fas.fa-info-circle
+                p Perfect for #{place.difficulty.toLowerCase()} level explorers

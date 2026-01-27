@@ -1,60 +1,154 @@
 extends layout
 
 block content
+  include navbar
+  
   .dashboard-container
-
     .dashboard-header
-      div
+      .header-content
         h2 Dashboard
-        p.subtitle Your contributions to Unseen Britain
-      a.btn-create(href="/place/create") + Create Place
+        p.subtitle Manage your contributions to Unseen Britain
+      a.btn-create-place(href="/place/create")
+        i.fas.fa-plus-circle
+        span Add New Place
 
-    form.filters(method="GET", action="/dashboard")
-      select(name="category")
-        option(value="") All Categories
-        option(value="nature" selected=filters.category=="nature") Nature
-        option(value="village" selected=filters.category=="village") Village
-        option(value="viewpoint" selected=filters.category=="viewpoint") Viewpoint
-        option(value="historic" selected=filters.category=="historic") Historic
-
-      select(name="difficulty")
-        option(value="") All Levels
-        option(value="Easy" selected=filters.difficulty=="Easy") Easy
-        option(value="Moderate" selected=filters.difficulty=="Moderate") Moderate
-        option(value="Hard" selected=filters.difficulty=="Hard") Hard
-
-      input(type="text", name="region", placeholder="Region", value=filters.region)
-
-      button(type="submit") Apply Filters
+    .dashboard-filters
+      .filter-header
+        h3 Filter Your Places
+      
+      form.filters-form(method="GET", action="/dashboard")
+        .filter-grid
+          .filter-group
+            label.filter-label(for="category")
+              i.fas.fa-tag
+              span Category
+            select.filter-select(name="category" id="category")
+              option(value="") All Categories
+              option(value="nature" selected=filters.category=="nature") Nature
+              option(value="village" selected=filters.category=="village") Village
+              option(value="viewpoint" selected=filters.category=="viewpoint") Viewpoint
+              option(value="historic" selected=filters.category=="historic") Historic
+          
+          .filter-group
+            label.filter-label(for="difficulty")
+              i.fas.fa-mountain
+              span Difficulty
+            select.filter-select(name="difficulty" id="difficulty")
+              option(value="") All Levels
+              option(value="Easy" selected=filters.difficulty=="Easy") Easy
+              option(value="Moderate" selected=filters.difficulty=="Moderate") Moderate
+              option(value="Hard" selected=filters.difficulty=="Hard") Hard
+          
+          .filter-group
+            label.filter-label(for="region")
+              i.fas.fa-map-marker-alt
+              span Region
+            input.filter-input(
+              type="text"
+              name="region"
+              id="region"
+              placeholder="e.g., Scotland, Wales..."
+              value=filters.region
+            )
+        
+        .filter-actions
+          button.filter-submit(type="submit")
+            i.fas.fa-filter
+            span Apply Filters
+          a.filter-reset(href="/dashboard")
+            i.fas.fa-times
+            span Clear
 
     if places.length === 0
-      p.empty You haven’t added any places yet.
-
+      .dashboard-empty
+        .empty-icon
+          i.fas.fa-map-marked-alt
+        h3 No Places Found
+        p You haven't added any places yet, or no places match your filters.
+        a.btn-create-place(href="/place/create")
+          i.fas.fa-plus-circle
+          span Create Your First Place
     else
-      table.dashboard-table
-        thead
-          tr
-            th Title
-            th Region
-            th Category
-            th Difficulty
-            th Photos
-            th Risks
-            th Created
-            th Actions
-
-        tbody
-          each place in places
+      .dashboard-table-container
+        table.dashboard-table
+          thead
             tr
-              td #{place.title}
-              td #{place.region}
-              td #{place.category}
-              td #{place.difficulty}
-              td #{place.photo_count}
-              td #{place.risk_count}
-              td #{place.created_at.toDateString()}
-              td.actions
-                a(href=`/place/${place.id}`) View
-                a.btn-edit(href=`/place/details/edit/${place.id}`) Edit
-                form(method="POST", action=`/place/delete/${place.id}`)
-                  button.btn-delete(type="submit" onclick="return confirm('Delete this place?')") Delete
+              th.table-col-title Title
+              th.table-col-region Region
+              th.table-col-category Category
+              th.table-col-difficulty Difficulty
+              th.table-col-photos 
+                i.fas.fa-camera
+              th.table-col-risks 
+                i.fas.fa-exclamation-triangle
+              th.table-col-created Created
+              th.table-col-actions Actions
+          
+          tbody
+            each place in places
+              tr
+                td.place-title-cell
+                  .place-title-content
+                    if place.image
+                      img.place-thumb(src=place.image alt=place.title)
+                    else
+                      .place-thumb-placeholder
+                        i.fas.fa-mountain
+                    .place-title-info
+                      strong #{place.title}
+                
+                td.place-region
+                  span.region-badge #{place.region}
+                
+                td.place-category
+                  span.category-badge(class=place.category) #{place.category}
+                
+                td.place-difficulty
+                  span.difficulty-badge(class=place.difficulty.toLowerCase()) 
+                    i.fas.fa-mountain
+                    span #{place.difficulty}
+                
+                td.place-photos
+                  if place.photo_count > 0
+                    span.photo-count
+                      i.fas.fa-camera
+                      span #{place.photo_count}
+                  else
+                    span.no-photos
+                      i.fas.fa-times
+                      span None
+                
+                td.place-risks
+                  if place.risk_count > 0
+                    span.risk-count.has-risks
+                      i.fas.fa-exclamation-triangle
+                      span #{place.risk_count}
+                  else
+                    span.risk-count.no-risks
+                      i.fas.fa-check
+                      span Safe
+                
+                td.place-created
+                  .date-cell
+                    .date-day #{place.created_at.getDate()}
+                    .date-month #{place.created_at.toLocaleString('en-GB', { month: 'short' })}
+                    .date-year #{place.created_at.getFullYear()}
+                
+                td.place-actions
+                  .action-buttons
+                    a.action-btn.view-btn(href=`/place/${place.id}` title="View Place")
+                      i.fas.fa-eye
+                      span.tooltip View
+                    
+                    a.action-btn.edit-btn(href=`/place/edit/${place.id}` title="Edit Place")
+                      i.fas.fa-edit
+                      span.tooltip Edit
+                    
+                    form.delete-form(method="POST" action=`/place/delete/${place.id}`)
+                      button.action-btn.delete-btn(
+                        type="submit" 
+                        onclick="return confirm('Are you sure you want to delete this place?')"
+                        title="Delete Place"
+                      )
+                        i.fas.fa-trash-alt
+                        span.tooltip Delete
