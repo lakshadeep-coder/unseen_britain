@@ -1,0 +1,37 @@
+extends layout
+
+block content
+  include navbar
+
+  .places-section
+    h2
+      i.fas.fa-heart
+      |  My Favorite Places
+
+    if !places || places.length === 0
+      p You have no favorite places yet.
+    else
+      .place-grid
+        each place in places
+          .place-card
+            if place.image
+              img(src=place.image alt=place.title)
+            else
+              img(src="/placeholder.jpg" alt=place.title)
+
+            .card-content
+              h3 #{place.title}
+              p.meta #{place.region} · #{place.category}
+              span.badge #{place.difficulty}
+              p.rating
+                i.fas.fa-star
+                |  #{place.avg_rating || "No ratings"}
+
+              .card-actions
+                a.btn-view(href=`/place/view/${place.id}`)
+                  i.fas.fa-eye
+                  | View
+
+                form(method="POST", action=`/favorite/${place.id}`)
+                  button.favorite-btn(type="submit", title="Remove from favorites")
+                    i.fas.fa-heart-broken

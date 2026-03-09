@@ -16,7 +16,7 @@ block content
           span #{place.title}
         
         .place-header-actions
-          a.btn-action(href=`/place/edit/${place.id}`)
+          a.btn-action(href=`/place/details/edit/${place.id}`)
             i.fas.fa-edit
             span Edit
           form.delete-form(method="POST" action=`/place/delete/${place.id}`)
@@ -112,7 +112,7 @@ block content
               
               .cost-total
                 .total-label Total Estimated Cost
-                .total-value £#{((cost.travel_cost || 0) + (cost.food_cost || 0) + (cost.stay_cost || 0) + (cost.entry_fee || 0))}
+                .total-value £#{totalCost}
           
           //- Requirements
           .detail-card

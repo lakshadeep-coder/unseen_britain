@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  include navbar
+
+  .places-section
+    h2
+      i.fas.fa-fire
+      |  Top Rated Hidden Places
+
+    .place-grid
+      each place in places
+        .place-card
+          img(src=place.image || "/placeholder.jpg")
+
+          .card-content
+            h3 #{place.title}
+            p.meta #{place.region}
+            p.rating
+              i.fas.fa-star
+              |  #{place.avg_rating || "No ratings"}

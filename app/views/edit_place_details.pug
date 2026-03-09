@@ -1,42 +1,284 @@
 extends layout
 
 block content
-  .form-container
-    h2 Edit Place Details
+  include navbar
 
-    if success
-      .success-msg #{success}
+  .form-page
+    .form-container
+      .form-header
+        h2 Edit Place Details
+        p.form-subtitle Update costs, requirements, and photos
 
-    form(method="POST" enctype="multipart/form-data")
+      if success
+        .success-msg
+          i.fas.fa-check-circle
+          span #{success}
 
-      h3 Cost Details (£)
-      input(type="number", name="travel_cost", value=cost.travel_cost)
-      input(type="number", name="food_cost", value=cost.food_cost)
-      input(type="number", name="stay_cost", value=cost.stay_cost)
-      input(type="number", name="entry_fee", value=cost.entry_fee)
+      if errors
+        .error-list
+          i.fas.fa-exclamation-triangle
+          ul
+            each err in errors
+              li #{err}
 
-      hr
-      h3 What to Carry
+      form.form-content(method="POST", enctype="multipart/form-data")
+        .form-section
+          .section-header
+            i.fas.fa-info-circle
+            h3 Basic Information
 
-      label
-        input(type="checkbox", name="footwear", checked=reqs.footwear)
-        | Footwear
+          .form-grid
+            .form-group.full-width
+              label.form-label
+                i.fas.fa-heading
+                span Title
+              input.form-input(
+                type="text",
+                name="title",
+                placeholder="Enter place name",
+                value=place && place.title || "",
+                required
+              )
+              .form-hint A catchy, descriptive name for your discovery
 
-      label
-        input(type="checkbox", name="water", checked=reqs.water)
-        | Water
+            .form-group.full-width
+              label.form-label
+                i.fas.fa-align-left
+                span Description
+              textarea.form-textarea(
+                name="description",
+                placeholder="Describe what makes this place special...",
+                required
+                rows="4"
+              ) #{place && place.description || ""}
+              .form-hint Share the story, atmosphere, and unique features
 
-      label
-        input(type="checkbox", name="food", checked=reqs.food)
-        | Food
+            .form-group
+              label.form-label
+                i.fas.fa-map-marker-alt
+                span Region
+              input.form-input(
+                type="text",
+                name="region",
+                placeholder="e.g., Scotland, Lake District",
+                value=place && place.region || "",
+                required
+              )
 
-      label
-        input(type="checkbox", name="raincoat", checked=reqs.raincoat)
-        | Raincoat
+            .form-group
+              label.form-label
+                i.fas.fa-tag
+                span Category
+              select.form-select(name="category", required)
+                option(value="") Select Category
+                option(
+                  value="nature",
+                  selected=place && place.category == "nature"
+                ) Nature
+                option(
+                  value="village",
+                  selected=place && place.category == "village"
+                ) Village
+                option(
+                  value="viewpoint",
+                  selected=place && place.category == "viewpoint"
+                ) Viewpoint
+                option(
+                  value="historic",
+                  selected=place && place.category == "historic"
+                ) Historic
 
+            .form-group
+              label.form-label
+                i.fas.fa-mountain
+                span Difficulty
+              select.form-select(name="difficulty", required)
+                option(value="") Select Difficulty
+                option(
+                  value="Easy",
+                  selected=place && place.difficulty == "Easy"
+                ) Easy
+                option(
+                  value="Moderate",
+                  selected=place && place.difficulty == "Moderate"
+                ) Moderate
+                option(
+                  value="Hard",
+                  selected=place && place.difficulty == "Hard"
+                ) Hard
 
-      hr
-      h3 Upload More Photos
-      input(type="file", name="photos" multiple)
+        .form-section
+          .section-header
+            i.fas.fa-pound-sign
+            h3 Cost Details
+            .section-subtitle All costs in £ (British Pounds)
 
-      button(type="submit") Update Details
+          .cost-grid
+            .cost-card
+              .cost-icon
+                i.fas.fa-car
+              label.cost-label Travel Cost
+              input.cost-input(
+                type="number",
+                name="travel_cost",
+                placeholder="0",
+                value=cost && cost.travel_cost || 0,
+                min="0"
+              )
+              .cost-hint Transportation expenses
+
+            .cost-card
+              .cost-icon
+                i.fas.fa-utensils
+              label.cost-label Food Cost
+              input.cost-input(
+                type="number",
+                name="food_cost",
+                placeholder="0",
+                value=cost && cost.food_cost || 0,
+                min="0"
+              )
+              .cost-hint Meals & snacks
+
+            .cost-card
+              .cost-icon
+                i.fas.fa-bed
+              label.cost-label Stay Cost
+              input.cost-input(
+                type="number",
+                name="stay_cost",
+                placeholder="0",
+                value=cost && cost.stay_cost || 0,
+                min="0"
+              )
+              .cost-hint Accommodation
+
+            .cost-card
+              .cost-icon
+                i.fas.fa-ticket-alt
+              label.cost-label Entry Fee
+              input.cost-input(
+                type="number",
+                name="entry_fee",
+                placeholder="0",
+                value=cost && cost.entry_fee || 0,
+                min="0"
+              )
+              .cost-hint Entrance tickets
+
+        .form-section
+          .section-header
+            i.fas.fa-hiking
+            h3 What to Carry
+            .section-subtitle Essential items for this adventure
+
+          .requirements-grid
+            .requirement-item
+              label.checkbox-label
+                input.checkbox-input(
+                  type="checkbox",
+                  name="footwear",
+                  checked=reqs && reqs.footwear
+                )
+                .checkbox-custom
+                  i.fas.fa-check
+                .checkbox-content
+                  .checkbox-icon
+                    i.fas.fa-shoe-prints
+                  .checkbox-text
+                    strong Footwear
+                    small Hiking boots or sturdy shoes
+
+            .requirement-item
+              label.checkbox-label
+                input.checkbox-input(
+                  type="checkbox",
+                  name="water",
+                  checked=reqs && reqs.water
+                )
+                .checkbox-custom
+                  i.fas.fa-check
+                .checkbox-content
+                  .checkbox-icon
+                    i.fas.fa-tint
+                  .checkbox-text
+                    strong Water
+                    small Hydration is essential
+
+            .requirement-item
+              label.checkbox-label
+                input.checkbox-input(
+                  type="checkbox",
+                  name="food",
+                  checked=reqs && reqs.food
+                )
+                .checkbox-custom
+                  i.fas.fa-check
+                .checkbox-content
+                  .checkbox-icon
+                    i.fas.fa-apple-alt
+                  .checkbox-text
+                    strong Food
+                    small Snacks or packed meals
+
+            .requirement-item
+              label.checkbox-label
+                input.checkbox-input(
+                  type="checkbox",
+                  name="raincoat",
+                  checked=reqs && reqs.raincoat
+                )
+                .checkbox-custom
+                  i.fas.fa-check
+                .checkbox-content
+                  .checkbox-icon
+                    i.fas.fa-umbrella
+                  .checkbox-text
+                    strong Raincoat
+                    small British weather protection
+
+        .form-section
+          .section-header
+            i.fas.fa-camera
+            h3 Add More Photos
+            .section-subtitle JPG, PNG up to 2MB each (max 5)
+
+          .photo-upload
+            label.file-upload-label
+              .upload-area
+                i.fas.fa-cloud-upload-alt
+                span Upload Photos
+                small Select one or more files
+              input.file-upload-input(
+                type="file",
+                name="photos",
+                accept="image/png,image/jpeg",
+                id="photos-input",
+                multiple
+              )
+
+            .upload-preview
+              small#selected-files No files selected
+
+        .form-actions
+          button.btn-submit(type="submit")
+            i.fas.fa-save
+            span Update Details
+          a.btn-cancel(href="/dashboard")
+            i.fas.fa-times
+            span Cancel
+
+  script.
+    (function () {
+      const input = document.getElementById("photos-input");
+      const fileNameText = document.getElementById("selected-files");
+      if (!input || !fileNameText) return;
+      input.addEventListener("change", function () {
+        if (input.files && input.files.length > 0) {
+          const names = Array.from(input.files).map(function (file) { return file.name; });
+          fileNameText.textContent = input.files.length + " file(s): " + names.join(", ");
+        } else {
+          fileNameText.textContent = "No files selected";
+        }
+      });
+    })();

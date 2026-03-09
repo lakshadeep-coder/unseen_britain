@@ -7,7 +7,7 @@ block content
     .form-container
       .form-header
         h2 Add New Place
-        p.subtitle Share your hidden discovery with the Unseen Britain community
+        p.form-subtitle Share your hidden discovery with the Unseen Britain community
         
       // SUCCESS MESSAGE
       if success
@@ -77,19 +77,19 @@ block content
                 option(
                   value="nature",
                   selected=form && form.category == "nature"
-                ) 🌿 Nature
+                ) Nature
                 option(
                   value="village",
                   selected=form && form.category == "village"
-                ) 🏡 Village
+                ) Village
                 option(
                   value="viewpoint",
                   selected=form && form.category == "viewpoint"
-                ) 🏞️ Viewpoint
+                ) Viewpoint
                 option(
                   value="historic",
                   selected=form && form.category == "historic"
-                ) 🏰 Historic
+                ) Historic
             
             .form-group
               label.form-label
@@ -100,15 +100,15 @@ block content
                 option(
                   value="Easy",
                   selected=form && form.difficulty == "Easy"
-                ) 🟢 Easy
+                ) Easy
                 option(
                   value="Moderate",
                   selected=form && form.difficulty == "Moderate"
-                ) 🟡 Moderate
+                ) Moderate
                 option(
                   value="Hard",
                   selected=form && form.difficulty == "Hard"
-                ) 🔴 Hard
+                ) Hard
         
         .form-section
           .section-header
@@ -250,16 +250,18 @@ block content
             label.file-upload-label
               .upload-area
                 i.fas.fa-cloud-upload-alt
-                span Upload Photo
-                small JPG, PNG up to 5MB
+                span Upload Photos
+                small JPG, PNG up to 2MB each (max 5)
               input.file-upload-input(
                 type="file",
-                name="photo",
-                accept="image/*"
+                name="photos",
+                accept="image/png,image/jpeg",
+                id="photo-input",
+                multiple
               )
             
             .upload-preview
-              // Preview area for selected image
+              small#selected-file No files selected
         
         .form-actions
           button.btn-submit(type="submit")
@@ -268,3 +270,18 @@ block content
           a.btn-cancel(href="/dashboard")
             i.fas.fa-times
             span Cancel
+
+  script.
+    (function () {
+      const input = document.getElementById("photo-input");
+      const fileNameText = document.getElementById("selected-file");
+      if (!input || !fileNameText) return;
+      input.addEventListener("change", function () {
+        if (input.files && input.files.length > 0) {
+          const names = Array.from(input.files).map(function (file) { return file.name; });
+          fileNameText.textContent = input.files.length + " file(s): " + names.join(", ");
+        } else {
+          fileNameText.textContent = "No files selected";
+        }
+      });
+    })();

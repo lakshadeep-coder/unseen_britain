@@ -1,44 +1,254 @@
 extends layout
 
 block content
-  .place-detail
-    h2 #{place.title}
+  if currentUserId
+    include navbar
+  else
+    include visitor_navbar
 
-    p.meta
-      | #{place.region} · #{place.category} · #{place.difficulty}
+  .place-detail-page
+    .place-detail-container
+      .place-header
+        .place-breadcrumb
+          a(href="/") Home
+          i.fas.fa-chevron-right
+          span #{place.title}
 
-    p.description #{place.description}
+      .place-content
+        .place-hero
+          h1.place-title #{place.title}
+          .place-meta
+            .meta-item
+              i.fas.fa-map-marker-alt
+              span.region #{place.region}
+            .meta-item
+              i.fas.fa-tag
+              span.category #{place.category}
+            .meta-item
+              i.fas.fa-mountain
+              span.difficulty(class=place.difficulty.toLowerCase()) #{place.difficulty}
+            .meta-item
+              i.fas.fa-calendar-alt
+              span.date Added #{place.created_at.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
 
-    hr
+          .place-description
+            p #{place.description}
 
-    h3 Cost Details (£)
-    ul
-      li Travel: £#{cost.travel_cost || 0}
-      li Food: £#{cost.food_cost || 0}
-      li Stay: £#{cost.stay_cost || 0}
-      li Entry Fee: £#{cost.entry_fee || 0}
+        .place-section
+          .section-header
+            h2
+              i.fas.fa-camera
+              span Photos
+            .photo-count #{photos.length} photo#{photos.length !== 1 ? 's' : ''}
 
-    hr
+          if photos.length === 0
+            .photos-empty
+              .empty-state
+                i.fas.fa-images
+                h3 No Photos Yet
+                p No photos available for this place yet.
+          else
+            .photo-gallery
+              .photo-grid
+                each photo in photos
+                  .photo-item
+                    img(
+                      src=photo.image_path,
+                      alt="Photo of #{place.title}",
+                      loading="lazy"
+                    )
 
-    h3 What to Carry
-    ul
-      if reqs.footwear
-        li Footwear
-      if reqs.water
-        li Water
-      if reqs.food
-        li Food
-      if reqs.raincoat
-        li Raincoat
-      if !reqs.footwear && !reqs.water && !reqs.food && !reqs.raincoat
-        li No special requirements
+        .details-grid
+          .detail-card
+            .card-header
+              i.fas.fa-pound-sign
+              h3 Cost Details
+              .card-subtitle Estimated expenses in £
 
-    hr
+            .card-content
+              .cost-item
+                .cost-label
+                  i.fas.fa-car
+                  span Travel
+                .cost-value £#{cost.travel_cost || 0}
 
-    h3 Photos
-    if photos.length === 0
-      p No photos available
-    else
-      .photo-grid
-        each photo in photos
-          img(src=photo.image_path)
+              .cost-item
+                .cost-label
+                  i.fas.fa-utensils
+                  span Food
+                .cost-value £#{cost.food_cost || 0}
+
+              .cost-item
+                .cost-label
+                  i.fas.fa-bed
+                  span Stay
+                .cost-value £#{cost.stay_cost || 0}
+
+              .cost-item
+                .cost-label
+                  i.fas.fa-ticket-alt
+                  span Entry Fee
+                .cost-value £#{cost.entry_fee || 0}
+
+              .cost-total
+                .total-label Total Estimated Cost
+                .total-value £#{totalCost}
+
+          .detail-card
+            .card-header
+              i.fas.fa-hiking
+              h3 What to Carry
+              .card-subtitle Essential items for this adventure
+
+            .card-content
+              if reqs.footwear || reqs.water || reqs.food || reqs.raincoat
+                .requirements-list
+                  if reqs.footwear
+                    .requirement-item
+                      .req-icon
+                        i.fas.fa-shoe-prints
+                      .req-text
+                        strong Proper Footwear
+                        small Hiking boots or sturdy shoes
+
+                  if reqs.water
+                    .requirement-item
+                      .req-icon
+                        i.fas.fa-tint
+                      .req-text
+                        strong Water
+                        small Stay hydrated on your adventure
+
+                  if reqs.food
+                    .requirement-item
+                      .req-icon
+                        i.fas.fa-apple-alt
+                      .req-text
+                        strong Food
+                        small Snacks or packed meals
+
+                  if reqs.raincoat
+                    .requirement-item
+                      .req-icon
+                        i.fas.fa-umbrella
+                      .req-text
+                        strong Raincoat
+                        small British weather protection
+              else
+                .no-requirements
+                  i.fas.fa-check-circle
+                  .no-reqs-text
+                    strong No special requirements
+                    small Just bring your sense of adventure!
+
+          .detail-card.stats-card
+            .card-header
+              i.fas.fa-chart-line
+              h3 Quick Stats
+
+            .card-content
+              .stat-item
+                .stat-label Category
+                .stat-value #{place.category}
+
+              .stat-item
+                .stat-label Difficulty
+                .stat-value(class=place.difficulty.toLowerCase()) #{place.difficulty}
+
+              .stat-item
+                .stat-label Region
+                .stat-value #{place.region}
+
+              .stat-item
+                .stat-label Added
+                .stat-value #{place.created_at.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+
+          .detail-card.actions-card
+            .card-header
+              i.fas.fa-star
+              h3 Reviews & Favorites
+
+            .card-content
+              p.meta
+                | Average Rating:
+                strong  #{ratingSummary && ratingSummary.avg_rating ? ratingSummary.avg_rating : "No rating yet"}
+                |  (#{ratingSummary && ratingSummary.total_ratings ? ratingSummary.total_ratings : 0} review#{(ratingSummary && ratingSummary.total_ratings) === 1 ? "" : "s"})
+
+              if currentUserId
+                form(method="POST", action=`/rate/${place.id}`)
+                  .star-rating
+                    input(type="radio", id="star5", name="rating", value="5", checked=userRating === 5)
+                    label(for="star5")
+                      i.fas.fa-star
+                    input(type="radio", id="star4", name="rating", value="4", checked=userRating === 4)
+                    label(for="star4")
+                      i.fas.fa-star
+                    input(type="radio", id="star3", name="rating", value="3", checked=userRating === 3)
+                    label(for="star3")
+                      i.fas.fa-star
+                    input(type="radio", id="star2", name="rating", value="2", checked=userRating === 2)
+                    label(for="star2")
+                      i.fas.fa-star
+                    input(type="radio", id="star1", name="rating", value="1", checked=userRating === 1, required)
+                    label(for="star1")
+                      i.fas.fa-star
+                  button.btn-submit(type="submit", style="margin-top:10px;") Submit Rating
+
+                form(method="POST", action=`/favorite/${place.id}`, style="margin-top:12px;")
+                  button.btn-cancel(type="submit")
+                    i.fas(class=isFavorite ? "fa-heart" : "fa-heart-broken")
+                    span  #{isFavorite ? " Remove Favorite" : " Add to Favorites"}
+              else
+                .visit-info
+                  i.fas.fa-info-circle
+                  p Login to rate and add this place to favorites.
+                .action-links
+                  a.action-link.map-link(href="/login")
+                    i.fas.fa-sign-in-alt
+                    span Login
+                  a.action-link.share-link(href="/registration")
+                    i.fas.fa-user-plus
+                    span Register
+
+          .detail-card
+            .card-header
+              i.fas.fa-comments
+              h3 Comments
+              .card-subtitle Traveler reviews
+
+            .card-content
+              if currentUserId
+                form(method="POST", action=`/review/${place.id}`)
+                  .form-group
+                    label.form-label(for="review_rating")
+                      i.fas.fa-star
+                      span Your Rating
+                    select.form-select(name="review_rating" id="review_rating")
+                      option(value="") Keep current rating
+                      option(value="5" selected=userReview && userReview.rating == 5) 5 - Excellent
+                      option(value="4" selected=userReview && userReview.rating == 4) 4 - Very Good
+                      option(value="3" selected=userReview && userReview.rating == 3) 3 - Good
+                      option(value="2" selected=userReview && userReview.rating == 2) 2 - Fair
+                      option(value="1" selected=userReview && userReview.rating == 1) 1 - Poor
+                  .form-group
+                    label.form-label(for="comment")
+                      i.fas.fa-pen
+                      span Your Comment
+                    textarea.form-textarea(
+                      id="comment",
+                      name="comment",
+                      rows="3",
+                      placeholder="Share your experience..."
+                    ) #{userReview && userReview.comment ? userReview.comment : ""}
+                  button.btn-submit(type="submit") #{userReview ? "Update Review" : "Post Review"}
+
+              if !reviews || reviews.length === 0
+                p.meta(style="margin-top:12px;") No comments yet.
+              else
+                .requirements-list(style="margin-top:12px;")
+                  each review in reviews
+                    .requirement-item
+                      .req-text
+                        strong #{review.full_name}
+                        small #{review.created_at.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} · Rating: #{review.rating || "N/A"}
+                        p(style="margin-top:8px;") #{review.comment}

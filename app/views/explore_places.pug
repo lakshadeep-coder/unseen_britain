@@ -1,0 +1,75 @@
+extends layout
+
+block content
+  include navbar
+
+  // TOP RATED SECTION
+  .places-section
+    h2
+      i.fas.fa-fire
+      |  Top Rated Hidden Places
+
+    if !topPlaces || topPlaces.length === 0
+      p No rated places yet.
+    else
+      .place-grid
+        each place in topPlaces
+          .place-card
+            if place.image
+              img(src=place.image alt=place.title)
+            else
+              img(src="/placeholder.jpg")
+
+            .card-content
+              h3 #{place.title}
+              p.meta #{place.region} · #{place.category}
+              span.badge #{place.difficulty}
+
+              p.rating
+                i.fas.fa-star
+                |  #{place.avg_rating || "No rating"}
+
+              .card-actions
+                a.btn-view(href=`/place/view/${place.id}`)
+                  i.fas.fa-eye
+                  | View
+
+                form(method="POST", action=`/favorite/${place.id}`)
+                  button.favorite-btn(type="submit")
+                    i.fas.fa-heart
+
+
+  // EXPLORE ALL PLACES
+  .places-section
+    h2
+      i.fas.fa-compass
+      |  Explore Hidden Places
+
+    if !places || places.length === 0
+      p No places available.
+    else
+      .place-grid
+        each place in places
+          .place-card
+            if place.image
+              img(src=place.image alt=place.title)
+            else
+              img(src="/placeholder.jpg")
+
+            .card-content
+              h3 #{place.title}
+              p.meta #{place.region} · #{place.category}
+              span.badge #{place.difficulty}
+
+              .card-actions
+                a.btn-view(href=`/place/view/${place.id}`)
+                  i.fas.fa-eye
+                  | View
+
+                form(method="POST", action=`/favorite/${place.id}`)
+                  button.favorite-btn(type="submit")
+                    i.fas.fa-heart
+
+
+
+  

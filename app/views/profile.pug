@@ -1,0 +1,47 @@
+extends layout
+
+block content
+  include navbar
+
+  .dashboard-container
+    .dashboard-header
+      .header-content
+        h2 My Profile
+        p.subtitle Account details and activity
+
+    .details-grid
+      .detail-card
+        .card-header
+          i.fas.fa-user-circle
+          h3 Profile Info
+        .card-content
+          .stat-item
+            .stat-label Name
+            .stat-value #{user.full_name}
+          .stat-item
+            .stat-label Email
+            .stat-value #{user.email}
+          .stat-item
+            .stat-label Phone
+            .stat-value #{user.phone}
+          .stat-item
+            .stat-label Joined
+            .stat-value #{user.created_at.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+
+      .detail-card
+        .card-header
+          i.fas.fa-chart-bar
+          h3 Activity
+        .card-content
+          .stat-item
+            .stat-label Places Added
+            .stat-value #{stats.places_count || 0}
+          .stat-item
+            .stat-label Favorites
+            .stat-value #{stats.favorites_count || 0}
+          .stat-item
+            .stat-label Ratings Given
+            .stat-value #{stats.ratings_count || 0}
+          .stat-item
+            .stat-label Reviews Written
+            .stat-value #{stats.reviews_count || 0}
