@@ -298,6 +298,11 @@ body {
   z-index: 10;
 }
 
+/* Explore page has no hero section, so avoid negative overlap margin. */
+.explore-page .places-filters {
+  margin: 1.5rem auto 3rem;
+}
+
 .places-filters form {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -1336,6 +1341,10 @@ button[type="submit"]:hover {
   .places-filters {
     margin: -1rem 20px 2rem;
     padding: 1.5rem;
+  }
+
+  .explore-page .places-filters {
+    margin: 1rem 20px 2rem;
   }
   
   .places-filters form {

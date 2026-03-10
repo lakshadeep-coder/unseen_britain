@@ -3,72 +3,103 @@ extends layout
 block content
   include navbar
 
-  // TOP RATED SECTION
-  .places-section
-    h2
-      i.fas.fa-fire
-      |  Top Rated Hidden Places
+  .explore-page
+    .places-filters
+      form(method="GET", action="/explore")
+        input(
+          type="text",
+          name="q",
+          placeholder="Search places..."
+          value=filters && filters.q ? filters.q : ""
+        )
 
-    if !topPlaces || topPlaces.length === 0
-      p No rated places yet.
-    else
-      .place-grid
-        each place in topPlaces
-          .place-card
-            if place.image
-              img(src=place.image alt=place.title)
-            else
-              img(src="/placeholder.jpg")
+        select(name="category")
+          option(value="") All Categories
+          option(value="nature" selected=filters && filters.category=="nature") Nature
+          option(value="village" selected=filters && filters.category=="village") Village
+          option(value="viewpoint" selected=filters && filters.category=="viewpoint") Viewpoint
+          option(value="historic" selected=filters && filters.category=="historic") Historic
 
-            .card-content
-              h3 #{place.title}
-              p.meta #{place.region} · #{place.category}
-              span.badge #{place.difficulty}
+        select(name="difficulty")
+          option(value="") Any Difficulty
+          option(value="Easy" selected=filters && filters.difficulty=="Easy") Easy
+          option(value="Moderate" selected=filters && filters.difficulty=="Moderate") Moderate
+          option(value="Hard" selected=filters && filters.difficulty=="Hard") Hard
 
-              p.rating
-                i.fas.fa-star
-                |  #{place.avg_rating || "No rating"}
+        input(
+          type="text",
+          name="region",
+          placeholder="Region"
+          value=filters && filters.region ? filters.region : ""
+        )
 
-              .card-actions
-                a.btn-view(href=`/place/view/${place.id}`)
-                  i.fas.fa-eye
-                  | View
+        button(type="submit") Search
 
-                form(method="POST", action=`/favorite/${place.id}`)
-                  button.favorite-btn(type="submit")
-                    i.fas.fa-heart
+    // TOP RATED SECTION
+    .places-section
+      h2
+        i.fas.fa-fire
+        |  Top Rated Hidden Places
 
+      if !topPlaces || topPlaces.length === 0
+        p No rated places yet.
+      else
+        .place-grid
+          each place in topPlaces
+            .place-card
+              if place.image
+                img(src=place.image alt=place.title)
+              else
+                img(src="/placeholder.jpg")
 
-  // EXPLORE ALL PLACES
-  .places-section
-    h2
-      i.fas.fa-compass
-      |  Explore Hidden Places
+              .card-content
+                h3 #{place.title}
+                p.meta #{place.region} · #{place.category}
+                span.badge #{place.difficulty}
 
-    if !places || places.length === 0
-      p No places available.
-    else
-      .place-grid
-        each place in places
-          .place-card
-            if place.image
-              img(src=place.image alt=place.title)
-            else
-              img(src="/placeholder.jpg")
+                p.rating
+                  i.fas.fa-star
+                  |  #{place.avg_rating || "No rating"}
 
-            .card-content
-              h3 #{place.title}
-              p.meta #{place.region} · #{place.category}
-              span.badge #{place.difficulty}
+                .card-actions
+                  a.btn-view(href=`/place/view/${place.id}`)
+                    i.fas.fa-eye
+                    | View
 
-              .card-actions
-                a.btn-view(href=`/place/view/${place.id}`)
-                  i.fas.fa-eye
-                  | View
+                  form(method="POST", action=`/favorite/${place.id}`)
+                    button.favorite-btn(type="submit")
+                      i.fas.fa-heart
 
-                form(method="POST", action=`/favorite/${place.id}`)
-                  button.favorite-btn(type="submit")
-                    i.fas.fa-heart
+    // EXPLORE ALL PLACES
+    .places-section
+      h2
+        i.fas.fa-compass
+        |  Explore Hidden Places
+
+      if !places || places.length === 0
+        p No places available.
+      else
+        .place-grid
+          each place in places
+            .place-card
+              if place.image
+                img(src=place.image alt=place.title)
+              else
+                img(src="/placeholder.jpg")
+
+              .card-content
+                h3 #{place.title}
+                p.meta #{place.region} · #{place.category}
+                span.badge #{place.difficulty}
+
+                .card-actions
+                  a.btn-view(href=`/place/view/${place.id}`)
+                    i.fas.fa-eye
+                    | View
+
+                  form(method="POST", action=`/favorite/${place.id}`)
+                    button.favorite-btn(type="submit")
+                      i.fas.fa-heart
 
 
 

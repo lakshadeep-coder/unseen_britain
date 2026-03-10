@@ -822,6 +822,34 @@ app.post("/favorite/:id", requireLogin, async (req, res) => {
 });
 
 app.get("/explore", requireLogin, async (req, res) => {
+  const { q, category, difficulty, region } = req.query;
+
+  let conditions = [];
+  let values = [];
+
+  if (q) {
+    conditions.push("(p.title LIKE ? OR p.description LIKE ?)");
+    values.push(`%${q}%`, `%${q}%`);
+  }
+
+  if (category) {
+    conditions.push("p.category = ?");
+    values.push(category);
+  }
+
+  if (difficulty) {
+    conditions.push("p.difficulty = ?");
+    values.push(difficulty);
+  }
+
+  if (region) {
+    conditions.push("p.region LIKE ?");
+    values.push(`%${region}%`);
+  }
+
+  const whereClause = conditions.length
+    ? `WHERE ${conditions.join(" AND ")}`
+    : "";
 
   const topPlaces = await db.query(`
     SELECT p.id, p.title, p.region, p.category, p.difficulty,
@@ -830,10 +858,11 @@ app.get("/explore", requireLogin, async (req, res) => {
     FROM places p
     LEFT JOIN place_photos ph ON p.id = ph.place_id
     LEFT JOIN ratings r ON p.id = r.place_id
+    ${whereClause}
     GROUP BY p.id
     ORDER BY avg_rating DESC, p.created_at DESC
     LIMIT 6
-  `);
+  `, values);
 
   const places = await db.query(`
     SELECT p.id, p.title, p.region, p.category, p.difficulty,
@@ -842,13 +871,15 @@ app.get("/explore", requireLogin, async (req, res) => {
     FROM places p
     LEFT JOIN place_photos ph ON p.id = ph.place_id
     LEFT JOIN ratings r ON p.id = r.place_id
+    ${whereClause}
     GROUP BY p.id
     ORDER BY p.created_at DESC
-  `);
+  `, values);
 
   res.render("explore_places", {
     topPlaces,
-    places
+    places,
+    filters: req.query
   });
 
 });
